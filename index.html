@@ -110,6 +110,61 @@
   .cert-meta { font-family: var(--mono); font-size: 11px; color: var(--text); letter-spacing: 1px; display: flex; flex-direction: column; gap: 4px; }
   .cert-id { color: var(--cyan); }
   .cert-badge { display: inline-block; font-family: var(--mono); font-size: 9px; color: var(--green); border: 1px solid rgba(0,255,136,0.3); padding: 2px 8px; letter-spacing: 2px; margin-bottom: 12px; }
+
+  /* --- Certificate Gallery --- */
+  .gallery-subheader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 56px 0 20px; padding-top: 32px; border-top: 1px solid var(--border); }
+  .gallery-subtitle { font-family: var(--display); font-size: 18px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+  .gallery-subtitle span { color: var(--cyan); }
+  .gallery-count { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 2px; border: 1px solid rgba(0,255,136,0.3); padding: 4px 10px; }
+  .gallery-search { font-family: var(--mono); font-size: 12px; color: var(--text); background: var(--dim); border: 1px solid var(--border); padding: 8px 14px; letter-spacing: 1px; width: 220px; outline: none; transition: border-color 0.2s; }
+  .gallery-search:focus { border-color: var(--cyan); }
+  .gallery-search::placeholder { color: rgba(200,230,240,0.4); }
+  .cert-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: 14px; }
+  .cert-thumb { position: relative; background: var(--dim); border: 1px solid var(--border); aspect-ratio: 4/3; overflow: hidden; cursor: pointer; transition: all 0.25s; }
+  .cert-thumb:hover { border-color: var(--cyan); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,229,255,0.15); }
+  .cert-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; filter: saturate(0.9); }
+  .cert-thumb:hover img { transform: scale(1.06); }
+  .cert-thumb-num { position: absolute; top: 6px; left: 6px; font-family: var(--mono); font-size: 9px; color: var(--cyan); background: rgba(2,11,20,0.85); border: 1px solid var(--border); padding: 2px 6px; letter-spacing: 1px; }
+  .cert-thumb-zoom { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(2,11,20,0.55); opacity: 0; transition: opacity 0.25s; font-family: var(--mono); font-size: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+  .cert-thumb:hover .cert-thumb-zoom { opacity: 1; }
+
+  .lightbox-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(2,6,10,0.94); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 40px; }
+  .lightbox-overlay.active { display: flex; }
+  .lightbox-box { position: relative; max-width: 900px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .lightbox-box img { max-width: 100%; max-height: 78vh; border: 1px solid var(--border); background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+  .lightbox-meta { font-family: var(--mono); font-size: 12px; color: var(--cyan); letter-spacing: 2px; margin-top: 16px; text-transform: uppercase; }
+  .lightbox-close { position: absolute; top: -44px; right: 0; font-family: var(--mono); font-size: 12px; color: var(--text); background: transparent; border: 1px solid var(--border); padding: 8px 14px; cursor: pointer; letter-spacing: 2px; transition: all 0.2s; }
+  .lightbox-close:hover { border-color: var(--red); color: var(--red); }
+  .lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(4,15,28,0.8); border: 1px solid var(--border); color: var(--cyan); font-size: 22px; width: 48px; height: 48px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .lightbox-nav:hover { border-color: var(--cyan); background: rgba(0,229,255,0.1); }
+  .lightbox-prev { left: 24px; }
+  .lightbox-next { right: 24px; }
+  .lightbox-download { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--bg); background: var(--cyan); padding: 8px 20px; margin-top: 14px; text-decoration: none; text-transform: uppercase; transition: all 0.2s; }
+  .lightbox-download:hover { background: var(--green); }
+  @media (max-width: 600px){ .lightbox-nav{width:38px;height:38px;font-size:18px} .lightbox-prev{left:8px} .lightbox-next{right:8px} .gallery-search{width:100%} }
+
+  /* --- Depth layer: particle network + glow orbs --- */
+  #particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index: 0; pointer-events: none; opacity: 0.55; }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; opacity: 0.35; mix-blend-mode: screen; }
+  .glow-orb.o1 { width: 420px; height: 420px; background: var(--cyan); top: -10%; left: -8%; animation: orbFloat1 18s ease-in-out infinite; }
+  .glow-orb.o2 { width: 380px; height: 380px; background: var(--green); bottom: -12%; right: -6%; animation: orbFloat2 22s ease-in-out infinite; }
+  .glow-orb.o3 { width: 300px; height: 300px; background: #7c5cff; top: 40%; left: 60%; animation: orbFloat3 26s ease-in-out infinite; opacity: 0.2; }
+  @keyframes orbFloat1 { 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(60px,80px) scale(1.15); } }
+  @keyframes orbFloat2 { 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(-70px,-50px) scale(1.1); } }
+  @keyframes orbFloat3 { 0%,100%{ transform: translate(0,0) scale(1); } 50%{ transform: translate(-40px,60px) scale(1.2); } }
+
+  /* --- Music toggle --- */
+  .music-toggle { position: fixed; bottom: 24px; right: 24px; z-index: 1500; display: flex; align-items: center; gap: 10px; background: rgba(4,15,28,0.9); border: 1px solid var(--border); backdrop-filter: blur(10px); padding: 12px 18px; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--cyan); text-transform: uppercase; transition: all 0.3s; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .music-toggle:hover { border-color: var(--cyan); box-shadow: 0 8px 30px rgba(0,229,255,0.25); }
+  .music-toggle.playing { border-color: var(--green); color: var(--green); }
+  .music-bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .music-bars span { width: 3px; background: currentColor; height: 4px; animation: none; }
+  .music-toggle.playing .music-bars span { animation: barBounce 0.9s ease-in-out infinite; }
+  .music-bars span:nth-child(1){ animation-delay: 0s; }
+  .music-bars span:nth-child(2){ animation-delay: 0.2s; }
+  .music-bars span:nth-child(3){ animation-delay: 0.4s; }
+  @keyframes barBounce { 0%,100%{ height: 4px; } 50%{ height: 14px; } }
+  @media (max-width: 600px){ .music-toggle{ bottom:16px; right:16px; padding:10px 14px; font-size:10px; } }
   .skills-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 14px; }
   .skill-item { background: var(--dim); border: 1px solid var(--border); padding: 18px; transition: all 0.3s; }
   .skill-item:hover { border-color: var(--green); background: rgba(0,255,136,0.04); }
@@ -149,7 +204,16 @@
 </head>
 <body>
 <canvas id="matrix"></canvas> 
-  <canvas id="lightningCanvas"></canvas> 
+  <canvas id="lightningCanvas"></canvas>
+  <canvas id="particles"></canvas>
+  <div class="glow-orb o1"></div>
+  <div class="glow-orb o2"></div>
+  <div class="glow-orb o3"></div>
+  <button class="music-toggle" id="musicToggle">
+    <div class="music-bars"><span></span><span></span><span></span></div>
+    <span id="musicLabel">Play Theme</span>
+  </button>
+  <iframe id="bgMusicFrame" style="width:0;height:0;border:0;position:absolute;visibility:hidden" allow="autoplay" title="background music"></iframe>
 <nav>
   <div class="nav-logo">BALAJI<span>.P</span></div>
   <ul>
@@ -276,9 +340,6 @@
     </div>
   </div>
 
-</div>
-
-</div>
   <!-- College -->
   <div class="college-card">
     <div class="section-label" style="margin-bottom:12px">Currently Enrolled</div>
@@ -314,14 +375,12 @@ Sai Ram Engineering College
 class="sem-image"
 onclick="window.open(this.src)"
 alt="Semester 1">
-</div>
-</div>
 <!-- Semester 2 -->
 <img src="semester2.png"
 class="sem-image"
 onclick="window.open(this.src)"
 alt="Semester 2">
-  </div>
+</div>
 </div>
   </div>
 </section>
@@ -360,7 +419,26 @@ alt="Semester 2">
       <a href="https://www.guvi.in/certificate?id=442Z0HiD61WX7d2L78" target="_blank" class="btn btn-outline btn-sm" style="margin-top:16px">Verify Certificate →</a>
 </div> 
   </div>
+
+  <div class="gallery-subheader">
+    <div class="gallery-subtitle">All <span>Certificates</span></div>
+    <input type="text" class="gallery-search" id="certSearch" placeholder="🔍 Search certificates...">
+    <div class="gallery-count" id="certCount">106 CERTS</div>
+  </div>
+  <div class="cert-gallery-grid" id="certGalleryGrid"></div>
 </section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-nav lightbox-prev" id="lbPrev">‹</button>
+  <div class="lightbox-box">
+    <button class="lightbox-close" id="lbClose">✕ CLOSE</button>
+    <img id="lbImage" src="" alt="Certificate">
+    <div class="lightbox-meta" id="lbMeta"></div>
+    <a class="lightbox-download" id="lbDownload" href="" download>⬇ Download Full Size</a>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lbNext">›</button>
+</div>
     
 <div class="divider"></div>
 
@@ -373,12 +451,12 @@ alt="Semester 2">
   </div>
 
   <div class="skills-grid" id="skillsGrid">
-    <div class="skill-item"><div class="skill-name">Python</div><div class="skill-bar"><div class="skill-fill" data-pct="75"></div></div><div class="skill-pct">75%</div>
+    <div class="skill-item"><div class="skill-name">Python</div><div class="skill-bar"><div class="skill-fill" data-pct="75"></div></div><div class="skill-pct">75%</div></div>
     <div class="skill-item"><div class="skill-name">Google AI Studio</div><div class="skill-bar"><div class="skill-fill" data-pct="70"></div></div><div class="skill-pct">70%</div></div>
     <div class="skill-item"><div class="skill-name">Cybersecurity</div><div class="skill-bar"><div class="skill-fill" data-pct="55"></div></div><div class="skill-pct">55%</div></div>
     <div class="skill-item"><div class="skill-name">Web Development</div><div class="skill-bar"><div class="skill-fill" data-pct="55"></div></div><div class="skill-pct">55%</div></div>
     <div class="skill-item"><div class="skill-name">Linux</div><div class="skill-bar"><div class="skill-fill" data-pct="45"></div></div><div class="skill-pct">45%</div></div>
-    
+  </div>
 </section>
 
 <div class="divider"></div>
@@ -395,7 +473,8 @@ alt="Semester 2">
     <a href="https://www.linkedin.com/in/balaji-paramasivam-468505380/" target="_blank" class="contact-card">
       <div class="contact-icon">💼</div>
       <div><div class="contact-label">LinkedIn</div><div class="contact-val">balaji-paramasivam-468505380</div></div>
-<a href="https://github.com/CyberwarriorBalaji" target="_blank" class="contact-card">
+    </a>
+    <a href="https://github.com/CyberwarriorBalaji" target="_blank" class="contact-card">
       <div class="contact-icon">🤖</div>
       <div><div class="contact-label">github😎</div><div class="contact-val">CyberwarriorBalaj</div></div>
     </a>
@@ -403,9 +482,11 @@ alt="Semester 2">
       <div class="contact-icon">🎓</div>
       <div><div class="contact-label">College</div><div class="contact-val">Sai Ram Engineering College</div></div>
     </div>
-      </div>
-<a href="https://www.bing.com/maps/search?FORM=HDRSC6&q=srisairam+engineering+clg&cp=12.960277%7E80.057449&lvl=16&style=r" target="_blank" class="contact-card">
-</div>
+    <a href="https://www.bing.com/maps/search?FORM=HDRSC6&q=srisairam+engineering+clg&cp=12.960277%7E80.057449&lvl=16&style=r" target="_blank" class="contact-card">
+      <div class="contact-icon">📍</div>
+      <div><div class="contact-label">Location</div><div class="contact-val">View on Map</div></div>
+    </a>
+  </div>
 </section>
 
 <footer>
@@ -447,6 +528,157 @@ const obs = new IntersectionObserver(entries=>{
 },{threshold:0.3});
 const sg = document.getElementById('skillsGrid');
 if(sg) obs.observe(sg);
+
+// ===== Certificate Gallery + Lightbox =====
+const CERT_COUNT = 106;
+const certs = Array.from({length: CERT_COUNT}, (_, i) => {
+  const n = String(i + 1).padStart(3, '0');
+  return { id: n, thumb: `certs-thumb/cert-${n}-thumb.jpg`, full: `certs/cert-${n}.jpg` };
+});
+
+const galleryGrid = document.getElementById('certGalleryGrid');
+document.getElementById('certCount').textContent = CERT_COUNT + ' CERTS';
+
+function renderGallery(list){
+  galleryGrid.innerHTML = list.map(c => `
+    <div class="cert-thumb" data-id="${c.id}" onclick="openLightbox('${c.id}')">
+      <span class="cert-thumb-num">#${c.id}</span>
+      <img src="${c.thumb}" alt="Certificate ${c.id}" loading="lazy">
+      <div class="cert-thumb-zoom">View →</div>
+    </div>
+  `).join('');
+}
+renderGallery(certs);
+
+document.getElementById('certSearch').addEventListener('input', (e) => {
+  const q = e.target.value.trim().replace(/^0+/, '');
+  const filtered = q ? certs.filter(c => c.id.includes(q.padStart(3,'0')) || String(parseInt(c.id,10)).includes(q)) : certs;
+  renderGallery(filtered);
+});
+
+let currentIndex = 0;
+const lightbox = document.getElementById('lightbox');
+const lbImage = document.getElementById('lbImage');
+const lbMeta = document.getElementById('lbMeta');
+const lbDownload = document.getElementById('lbDownload');
+
+function openLightbox(id){
+  currentIndex = certs.findIndex(c => c.id === id);
+  showLightbox();
+}
+function showLightbox(){
+  const c = certs[currentIndex];
+  lbImage.src = c.full;
+  lbMeta.textContent = `Certificate #${c.id} of ${CERT_COUNT}`;
+  lbDownload.href = c.full;
+  lbDownload.setAttribute('download', `Balaji-Certificate-${c.id}.jpg`);
+  lightbox.classList.add('active');
+}
+function closeLightbox(){ lightbox.classList.remove('active'); }
+function nextCert(){ currentIndex = (currentIndex + 1) % certs.length; showLightbox(); }
+function prevCert(){ currentIndex = (currentIndex - 1 + certs.length) % certs.length; showLightbox(); }
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbNext').addEventListener('click', nextCert);
+document.getElementById('lbPrev').addEventListener('click', prevCert);
+lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if(!lightbox.classList.contains('active')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowRight') nextCert();
+  if(e.key === 'ArrowLeft') prevCert();
+});
+
+// ===== Particle network (depth layer) =====
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles, mouse = { x: null, y: null };
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COUNT = window.innerWidth < 700 ? 35 : 70;
+  const colors = ['#00e5ff', '#00ff88'];
+  particles = Array.from({length: COUNT}, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: (Math.random() - 0.5) * 0.35,
+    r: Math.random() * 1.8 + 0.6,
+    color: colors[Math.random() < 0.5 ? 0 : 1]
+  }));
+
+  window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+  function step(){
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0 || p.x > w) p.vx *= -1;
+      if(p.y < 0 || p.y > h) p.vy *= -1;
+      if(mouse.x !== null){
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 120){
+          p.x += dx / dist * 0.6;
+          p.y += dy / dist * 0.6;
+        }
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.7;
+      ctx.fill();
+    });
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i + 1; j < particles.length; j++){
+        const a = particles[i], b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 130){
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = '#00e5ff';
+          ctx.globalAlpha = (1 - dist / 130) * 0.15;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+// ===== Background music toggle (Sawadeeka - Vidaamuyarchi, official Sony Music South video) =====
+(function(){
+  const YT_ID = '-lqDLcM_vPE';
+  const btn = document.getElementById('musicToggle');
+  const label = document.getElementById('musicLabel');
+  const frame = document.getElementById('bgMusicFrame');
+  let playing = false;
+
+  btn.addEventListener('click', () => {
+    playing = !playing;
+    if(playing){
+      frame.src = `https://www.youtube.com/embed/${YT_ID}?autoplay=1&start=15`;
+      label.textContent = 'Pause Theme';
+      btn.classList.add('playing');
+    } else {
+      frame.src = '';
+      label.textContent = 'Play Theme';
+      btn.classList.remove('playing');
+    }
+  });
+})();
 </script>
 </body>
 </html>
